@@ -11,9 +11,12 @@ export class Map implements AfterViewInit {
   @ViewChild('map', { static: true })
   mapElement!: ElementRef<HTMLDivElement>;
 
+  luxembourg_latitude = 49.6116;
+  luxembourg_longitude = 6.1300;
+
   ngAfterViewInit(): void {
     const map = L.map(this.mapElement.nativeElement).setView(
-      [49.6116, 6.1319],
+      [this.luxembourg_latitude, this.luxembourg_longitude],
       12
     );
 
