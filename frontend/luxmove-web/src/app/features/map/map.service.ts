@@ -1,26 +1,18 @@
 import { Injectable } from '@angular/core';
 import { MobilityLocation } from './mobility-location';
 import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
 
-  private readonly locations: MobilityLocation[] = [
-    {
-      name: 'Luxembourg City',
-      latitude: 49.6116,
-      longitude: 6.1300,
-    },
-    {
-      name: 'Luxembourg Gare',
-      latitude: 49.6008,
-      longitude: 6.1347,
-    }
-  ];
+  private readonly apiUrl = "http://localhost:8080/api/locations";
+
+  constructor(private readonly http: HttpClient){}
 
   getLocations(): Observable<MobilityLocation[]> {
-    return of(this.locations);
+    return this.http.get<MobilityLocation[]>(this.apiUrl);
   }
 }
