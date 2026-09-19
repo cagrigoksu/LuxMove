@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import { MapService } from './map.service';
+import { MobilityLocationType } from './mobility-location-type';
 
 @Component({
   selector: 'app-map',
@@ -9,6 +10,31 @@ import { MapService } from './map.service';
   styleUrl: './map.css',
 })
 export class Map implements AfterViewInit {
+
+    private getLocationTypeLabel(type: MobilityLocationType): string {
+    switch (type) {
+      case 'TRAIN_STATION':
+        return 'Train station';
+
+      case 'BUS_STOP':
+        return 'Bus stop';
+
+      case 'BIKE_STATION':
+        return 'Bike station';
+
+      case 'PARKING':
+        return 'Parking';
+
+      case 'EV_CHARGER':
+        return 'EV charger';
+
+      case 'CAR_SHARING':
+        return 'Car sharing';
+
+      case 'MOBILITY_HUB':
+        return 'Mobility hub';
+    }
+  }
 
   constructor(private readonly mapService: MapService){};
 
@@ -49,7 +75,10 @@ export class Map implements AfterViewInit {
           { icon: mobilityIcon }
         )
           .addTo(map)
-          .bindPopup(location.name);
+          .bindPopup(`
+            <strong>${location.name}</strong><br>
+            ${this.getLocationTypeLabel(location.type)}
+          `);
       }
     
     });
