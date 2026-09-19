@@ -2,6 +2,8 @@ package lu.luxmove.luxmove_api.location;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,12 +28,17 @@ public class Location {
     )
     private Point location;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LocationType type;
+
     protected Location() {
     }
 
     public Location(String name, Point location) {
         this.name = name;
         this.location = location;
+        this.type = type;
     }
 
     public Long getId() {
@@ -44,5 +51,9 @@ public class Location {
 
     public Point getLocation() {
         return location;
+    }
+
+    public LocationType getType(){
+        return type;
     }
 }

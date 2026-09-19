@@ -26,7 +26,8 @@ public class LocationController {
                         .map(location -> new LocationResponse(
                                 location.getName(),
                                 location.getLocation().getY(),
-                                location.getLocation().getX()
+                                location.getLocation().getX(),
+                                location.getType()
                         )).toList();
         }
 

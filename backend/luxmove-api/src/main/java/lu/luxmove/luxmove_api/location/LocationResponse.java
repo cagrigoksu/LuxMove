@@ -3,5 +3,6 @@ package lu.luxmove.luxmove_api.location;
 public record LocationResponse (
     String name,
     double latitude,
-    double longitude
+    double longitude,
+    LocationType type
 ){}

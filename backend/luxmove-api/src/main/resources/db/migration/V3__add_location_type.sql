@@ -1,0 +1,11 @@
+ALTER TABLE locations
+ADD COLUMN type VARCHAR(50);
+
+UPDATE locations
+SET type = CASE
+    WHEN name = 'Luxembourg Gare' THEN 'TRAIN_STATION'
+    ELSE 'MOBILITY_HUB'
+END;
+
+ALTER TABLE locations
+ALTER COLUMN type SET NOT NULL;
