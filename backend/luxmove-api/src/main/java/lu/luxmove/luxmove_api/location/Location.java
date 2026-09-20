@@ -21,16 +21,16 @@ public class Location {
     @Column(nullable = false)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LocationType type;
+
     @Column(
             name = "location",
             nullable = false,
             columnDefinition = "geography(Point, 4326)"
     )
     private Point location;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private LocationType type;
 
     @Column(nullable = false)
     private String source;
@@ -63,12 +63,12 @@ public class Location {
         return name;
     }
 
-    public Point getLocation() {
-        return location;
-    }
-
     public LocationType getType() {
         return type;
+    }
+
+    public Point getLocation() {
+        return location;
     }
 
     public String getSource() {
