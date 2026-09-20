@@ -26,9 +26,7 @@ public class GtfsStopMapper {
         return new Location(
                 stop.stopName(),
                 point,
-                mapLocationType(stop.locationType()),
-                "GTFS",
-                stop.stopId()
+                mapLocationType(stop.locationType())
         );
     }
 

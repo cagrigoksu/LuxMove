@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.file.Path;
-
 @RestController
 @RequestMapping("/api/imports")
 public class GtfsImportController {
@@ -21,13 +19,8 @@ public class GtfsImportController {
     public ResponseEntity<GtfsImportService.ImportResult> importGtfs()
             throws Exception {
 
-        Path file = Path.of(
-                "../../data/gtfs/current/stops.txt"
+        return ResponseEntity.ok(
+                importService.importGtfs()
         );
-
-        GtfsImportService.ImportResult result =
-                importService.importStops(file);
-
-        return ResponseEntity.ok(result);
     }
 }

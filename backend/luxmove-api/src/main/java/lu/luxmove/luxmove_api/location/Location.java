@@ -32,27 +32,17 @@ public class Location {
     )
     private Point location;
 
-    @Column(nullable = false)
-    private String source;
-
-    @Column(name = "source_id", nullable = false)
-    private String sourceId;
-
     protected Location() {
     }
 
     public Location(
             String name,
             Point location,
-            LocationType type,
-            String source,
-            String sourceId
+            LocationType type
     ) {
         this.name = name;
         this.location = location;
         this.type = type;
-        this.source = source;
-        this.sourceId = sourceId;
     }
 
     public Long getId() {
@@ -71,15 +61,7 @@ public class Location {
         return location;
     }
 
-    public String getSource() {
-        return source;
-    }
-
-    public String getSourceId() {
-        return sourceId;
-    }
-
-    public void updateFromGtfs(
+    public void update(
             String name,
             Point location,
             LocationType type

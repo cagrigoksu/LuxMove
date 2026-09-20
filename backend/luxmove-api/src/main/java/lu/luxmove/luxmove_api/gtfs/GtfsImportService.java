@@ -1,96 +1,122 @@
 package lu.luxmove.luxmove_api.gtfs;
 
-import jakarta.transaction.Transactional;
-import lu.luxmove.luxmove_api.location.Location;
-import lu.luxmove.luxmove_api.location.LocationRepository;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class GtfsImportService {
 
-    private static final String SOURCE = "GTFS";
+    private static final Path GTFS_DIRECTORY =
+            Path.of("../../data/gtfs/current");
 
-    private final GtfsStopImporter importer;
-    private final GtfsStopMapper mapper;
-    private final LocationRepository locationRepository;
+    private final GtfsAgencyImporter agencyImporter;
+    private final GtfsAgencyService agencyService;
+
+    private final GtfsRouteImporter routeImporter;
+    private final GtfsRouteService routeService;
+
+    private final GtfsStopImporter stopImporter;
+    private final GtfsStopService stopService;
+
+    private final GtfsTripImporter tripImporter;
+    private final GtfsTripService tripService;  
+    
+    private final GtfsStopTimeImporter stopTimeImporter;
+    private final GtfsStopTimeService stopTimeService;
+
 
     public GtfsImportService(
-            GtfsStopImporter importer,
-            GtfsStopMapper mapper,
-            LocationRepository locationRepository
+            GtfsAgencyImporter agencyImporter,
+            GtfsAgencyService agencyService,
+            GtfsRouteImporter routeImporter,
+            GtfsRouteService routeService,
+            GtfsStopImporter stopImporter,
+            GtfsStopService stopService,
+            GtfsTripImporter tripImporter,
+            GtfsTripService tripService,
+            GtfsStopTimeImporter stopTimeImporter,
+            GtfsStopTimeService stopTimeService
     ) {
-        this.importer = importer;
-        this.mapper = mapper;
-        this.locationRepository = locationRepository;
+        this.agencyImporter = agencyImporter;
+        this.agencyService = agencyService;
+        this.routeImporter = routeImporter;
+        this.routeService = routeService;
+        this.stopImporter = stopImporter;
+        this.stopService = stopService;
+        this.tripImporter = tripImporter;
+        this.tripService = tripService;
+        this.stopTimeImporter = stopTimeImporter;
+        this.stopTimeService = stopTimeService;
     }
+    public ImportResult importGtfs() throws Exception {
 
-    @Transactional
-    public ImportResult importStops(Path file) throws Exception {
+        Path agencyFile =
+                GTFS_DIRECTORY.resolve("agency.txt");
 
-        List<GtfsStop> stops = importer.readStops(file);
+        List<GtfsAgency> agencies =
+                agencyImporter.readAgencies(agencyFile);
 
-        List<Location> existingLocations =
-                locationRepository.findAllBySource(SOURCE);
-
-        Map<String, Location> existingBySourceId = new HashMap<>();
-
-        for (Location location : existingLocations) {
-            existingBySourceId.put(
-                    location.getSourceId(),
-                    location
-            );
+        for (GtfsAgency agency : agencies) {
+            agencyService.saveAgency(agency);
         }
 
-        int inserted = 0;
-        int updated = 0;
+        Path routeFile =
+                GTFS_DIRECTORY.resolve("routes.txt");
+
+        List<GtfsRoute> routes =
+                routeImporter.readRoutes(routeFile);
+
+        for (GtfsRoute route : routes) {
+            routeService.saveRoute(route);
+        }
+
+        Path stopFile =
+            GTFS_DIRECTORY.resolve("stops.txt");
+
+        List<GtfsStop> stops =
+                stopImporter.readStops(stopFile);
 
         for (GtfsStop stop : stops) {
+            stopService.saveStop(stop);
+        }
 
-            Location existing = existingBySourceId.get(stop.stopId());
+        Path tripFile =
+                GTFS_DIRECTORY.resolve("trips.txt");
 
-            if (existing == null) {
+        List<GtfsTrip> trips =
+                tripImporter.readTrips(tripFile);
 
-                Location location = mapper.map(stop);
+        for (GtfsTrip trip : trips) {
+            tripService.saveTrip(trip);
+        }
 
-                existingBySourceId.put(
-                        stop.stopId(),
-                        location
-                );
+        Path stopTimeFile =
+                GTFS_DIRECTORY.resolve("stop_times.txt");
 
-                locationRepository.save(location);
+        List<GtfsStopTime> stopTimes =
+                stopTimeImporter.readStopTimes(stopTimeFile);
 
-                inserted++;
-
-            } else {
-
-                Location updatedLocation = mapper.map(stop);
-
-                existing.updateFromGtfs(
-                        updatedLocation.getName(),
-                        updatedLocation.getLocation(),
-                        updatedLocation.getType()
-                );
-
-                updated++;
-            }
+        for (GtfsStopTime stopTime : stopTimes) {
+            stopTimeService.saveStopTime(stopTime);
         }
 
         return new ImportResult(
+                agencies.size(),
+                routes.size(),
                 stops.size(),
-                inserted,
-                updated
+                trips.size(),
+                stopTimes.size()
         );
     }
 
     public record ImportResult(
-            int read,
-            int inserted,
-            int updated
+            int agencies,
+            int routes,
+            int stops,
+            int trips,
+            int stopTimes
     ) {
     }
 }
