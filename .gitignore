@@ -21,4 +21,4 @@ target/
 
 # Raw external datasets
 data/gtfs/*.zip
-data/gtfs/current/
+data/gtfs/current/*.txt
