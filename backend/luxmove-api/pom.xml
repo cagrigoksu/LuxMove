@@ -82,6 +82,13 @@
 			<artifactId>jts-core</artifactId>
 			<version>1.20.0</version>
 		</dependency>
+
+		<!-- for gtfs importer -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.14.1</version>
+		</dependency>
 	</dependencies>
 
 	<build>
